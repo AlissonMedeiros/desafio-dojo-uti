@@ -4,110 +4,18 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
-public class ProcessaMedicacaoTest {
+import static com.example.dojo.Validadores.validaPressao;
+import static com.example.dojo.Validadores.validaResultado;
 
-    public static final Entrada JOÃO_ALFREDO = new Entrada("João Alfredo", 85, 110);
-    public static final Entrada MARIA_DAS_DORES = new Entrada("Maria das dores", 60, 121);
-    public static final Entrada TADEU_CARVALHO = new Entrada("Tadeu Carvalho", 95, 199);
-    public static final Entrada LUIZA_MENDONÇA = new Entrada("Luiza Mendonça", 55, 39);
-    public static final Entrada JOANA_PADILHA = new Entrada("Joana Padilha", 75, 19);
+public class ProcessaMedicacaoTest {
 
     private ProcessaMedicacao validatePatientMedicines = new ProcessaMedicacao();
 
     @Test
-    public void quandoBatimentosNormaisEntaoNaoFazNada() {
-        Resultado result = Resultado.of(JOÃO_ALFREDO);
-        Assertions.assertThat(result).isNotNull();
-        validaResultado(result, "João Alfredo", 0D, 0D, false);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoCimaDe121EntaoAplicaCalmante() {
-        Resultado result = Resultado.of(MARIA_DAS_DORES);
-        Assertions.assertThat(result).isNotNull();
-        validaResultado(result, "Maria das dores", 0D, 60D, false);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoCimaDe150EntaoAplicaCalmante() {
-        Resultado result = Resultado.of(TADEU_CARVALHO);
-        Assertions.assertThat(result).isNotNull();
-        validaResultado(result, "Tadeu Carvalho", 0D, 142.5D, false);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoAbaixoDe40EntaoAplicaAdrenilina() {
-        Resultado result = Resultado.of(LUIZA_MENDONÇA);
-        Assertions.assertThat(result).isNotNull();
-        validaResultado(result, "Luiza Mendonça", 27.5D, 0D, false);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoAbaixoDe20EntaoAplicaAdrenilina() {
-        Resultado result = Resultado.of(JOANA_PADILHA);
-        Assertions.assertThat(result).isNotNull();
-        validaResultado(result, "Joana Padilha", 75D, 0D, true);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoEm20EntaoAplicaAdrenilina() {
-        Resultado result = Resultado.of(new Entrada("Joana Padilha", 90, 20));
-        Assertions.assertThat(result.getAdrenalina()).isEqualTo(45D);
-        Assertions.assertThat(result.isAlarme()).isFalse();
-    }
-
-    @Test
-    public void quandoBatimentosEstaoEm21EntaoAplicaAdrenilina() {
-        Resultado result = Resultado.of(new Entrada("Joana Padilha", 87, 21));
-        Assertions.assertThat(result.getAdrenalina()).isEqualTo(43.5);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoEm40EntaoAplicaAdrenilina() {
-        Resultado result = Resultado.of(new Entrada("Joana Padilha", 296, 40));
-        Assertions.assertThat(result.getAdrenalina()).isEqualTo(0D);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoEm41EntaoAplicaAdrenilina() {
-        Resultado result = Resultado.of(new Entrada("Joana Padilha", 37, 41));
-        Assertions.assertThat(result.getAdrenalina()).isEqualTo(0D);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoCimaDe120EntaoAplicaCalmante() {
-        Resultado result = Resultado.of(new Entrada("João Alfredo", 85, 120));
-        Assertions.assertThat(result.getCalmante()).isEqualTo(0D);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoCimaDe119EntaoAplicaCalmante() {
-        Resultado result = Resultado.of(new Entrada("João Alfredo", 85, 119));
-        Assertions.assertThat(result.getCalmante()).isEqualTo(0D);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoCimaDe139EntaoAplicaCalmante() {
-        Resultado result = Resultado.of(new Entrada("João Alfredo", 5, 139));
-        Assertions.assertThat(result.getCalmante()).isEqualTo(5D);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoCimaDe140EntaoAplicaCalmante() {
-        Resultado result = Resultado.of(new Entrada("João Alfredo", 369, 140));
-        Assertions.assertThat(result.getCalmante()).isEqualTo(369D);
-    }
-
-    @Test
-    public void quandoBatimentosEstaoCimaDe141EntaoAplicaCalmante() {
-        Resultado result = Resultado.of(new Entrada("João Alfredo", 259, 141));
-        Assertions.assertThat(result.getCalmante()).isEqualTo(388.5D);
-    }
-
-    @Test
-    public void quandoTenhoListaDePacientesEntaoRetoraMedicacaoDaAla() throws IOException {
+    public void quandoTenhoListaDePacientesEntaoRetoraMedicacaoParaBatimentos() throws IOException {
         List<Resultado> resultados = validatePatientMedicines.processa(this.getClass().getResourceAsStream("file.txt"));
         Assertions.assertThat(resultados).isNotNull()
                 .hasSize(5);
@@ -118,10 +26,32 @@ public class ProcessaMedicacaoTest {
         validaResultado(resultados.get(4), "Joana Padilha", 75D, 0D, true);
     }
 
-    private void validaResultado(Resultado result, String paciente, double adrenalina, double calmante, boolean temAlarme) {
-        Assertions.assertThat(result.getPaciente()).isEqualTo(paciente);
-        Assertions.assertThat(result.getAdrenalina()).isEqualTo(adrenalina);
-        Assertions.assertThat(result.getCalmante()).isEqualTo(calmante);
-        Assertions.assertThat(result.isAlarme()).isEqualTo(temAlarme);
+    @Test
+    public void quandoTenhoListaDePacientesEntaoRetoraMedicacaoParaPressao() throws IOException {
+        List<Resultado> resultados = validatePatientMedicines.processa(this.getClass().getResourceAsStream("file.txt"));
+        Assertions.assertThat(resultados).isNotNull()
+                .hasSize(5);
+        validaPressao(resultados.get(0), "Hipertensão 2", 0, 0, 50, false);
+        validaPressao(resultados.get(1), "Normal", 0, 0, 0, false);
+        validaPressao(resultados.get(2), "Crise Hipertensiva", 0, 0, 0, false);
+        validaPressao(resultados.get(3), "Pressão baixa", 25, 0, 0, false);
+        validaPressao(resultados.get(4), "Pré-Hipertensão", 0, 25, 0, false);
     }
+
+    @Test
+    public void quandoTenhoComMedicoesNormaisEntaoNaoGeraMedicacao() {
+        List<Resultado> resultados = validatePatientMedicines.processa(listaSaudavel());
+        validaResultado(resultados.get(0), "João Alfredo", 0D, 0D, false);
+        validaResultado(resultados.get(1), "Maria das dores", 0D, 0D, false);
+        validaPressao(resultados.get(0), "Normal", 0, 0, 0, false);
+        validaPressao(resultados.get(1), "Normal", 0, 0, 0, false);
+
+    }
+
+    private List<Entrada> listaSaudavel() {
+        return Arrays.asList(new Entrada("João Alfredo", 85, 120, "12:8")
+                , new Entrada("Maria das dores", 65, 83, "11:7"));
+    }
+
+
 }

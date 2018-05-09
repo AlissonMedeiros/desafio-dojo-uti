@@ -18,10 +18,16 @@ public class ProcessaMedicacao {
     private static Gson gson = new Gson();
 
     public List<Resultado> processa(InputStream file) throws IOException {
-        List<Resultado> resultados = new ArrayList<>();
         List<Entrada> data = paserFileToJSON(file);
+        return processa(data);
+    }
+
+    public List<Resultado> processa(List<Entrada> data) {
+        List<Resultado> resultados = new ArrayList<>();
         for( Entrada entrada : data) {
-            resultados.add(Resultado.of(entrada));
+            Batimentos batimentos = new Batimentos(entrada.batimentos, entrada.peso);
+            Pressao pressao = Pressao.of(entrada.pressao);
+            resultados.add(new Resultado(entrada.nome, batimentos, pressao));
         }
         return resultados;
     }

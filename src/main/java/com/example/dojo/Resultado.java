@@ -2,35 +2,26 @@ package com.example.dojo;
 
 public class Resultado {
 
-    private final String paciente;
-    private final double adrenalina;
-    private final double calmante;
-    private final boolean alarme;
+    public final String paciente;
+    public final double adrenalina;
+    public final double calmante;
+    public final int captopril;
+    public final int atenolol;
+    public final int furosemida;
+    public final boolean hidralazina;
+    public final boolean alarme;
+    public final String diagnostico;
 
-    public static Resultado of(Entrada entrada) {
-        return new Resultado(entrada.getPaciente(), entrada.getDoseAdrenalina(), entrada.getDoseCalmante(), entrada.temAlarme());
-    }
-
-    private Resultado(String paciente, double adrenalina, double calmante, boolean alarme) {
+    protected Resultado(String paciente, Batimentos batimentos, Pressao pressaoEntrada) {
         this.paciente = paciente;
-        this.adrenalina = adrenalina;
-        this.calmante = calmante;
-        this.alarme = alarme;
+        this.adrenalina = batimentos.getDoseAdrenalina();
+        this.calmante = batimentos.getDoseCalmante();
+        this.captopril = pressaoEntrada.captopril;
+        this.atenolol = pressaoEntrada.atenolol;
+        this.furosemida = pressaoEntrada.furosemida;
+        this.hidralazina = pressaoEntrada.aplicaHidralazina;
+        this.alarme = batimentos.temAlarme();
+        this.diagnostico = pressaoEntrada.diagnostico;
     }
 
-    public String getPaciente() {
-        return paciente;
-    }
-
-    public double getAdrenalina() {
-        return adrenalina;
-    }
-
-    public double getCalmante() {
-        return calmante;
-    }
-
-    public boolean isAlarme() {
-        return alarme;
-    }
 }

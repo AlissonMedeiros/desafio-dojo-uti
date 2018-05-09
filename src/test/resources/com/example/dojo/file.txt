@@ -3,7 +3,7 @@
     "batimentos": 110,
     "peso": 82,
     "nome": "João Alfredo",
-    "pressao": "18:5"
+    "pressao": "16:11"
   },
   {
     "batimentos": 121,
@@ -27,6 +27,6 @@
     "batimentos": 19,
     "peso": 75,
     "nome": "Joana Padilha",
-    "pressao": "6:2"
+    "pressao": "13:6"
   }
 ]
